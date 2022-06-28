@@ -1,0 +1,48 @@
+version: "3.9"
+
+networks:
+  rubi:
+    driver: bridge
+
+services:
+  apiA:
+    image: node:17.5.0-alpine
+    container_name: apiA
+    restart: always
+    volumes:
+      - ./apiA:/app
+    working_dir: /app
+    ports:
+      - "3333:3333"
+
+    command: npm run start
+    networks:
+      - rubi
+
+  apiB:
+    image: node:17.5.0-alpine
+    container_name: apiB
+    restart: always
+    volumes:
+      - ./apiB:/app
+    working_dir: /app
+    ports:
+      - "3334:3334"
+
+    command: npm run start
+    networks:
+      - rubi
+
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3.9-management
+    environment:
+      RABBITMQ_CONFIG_FILE: ./rabbitmq.conf
+    ports:
+      - "5673:5673"
+      - "15672:15672"
+    volumes:
+      - .:/app
+    working_dir: /app
+    networks:
+      - rubi
