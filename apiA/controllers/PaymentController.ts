@@ -30,7 +30,6 @@ export class FolhaPagamentoController {
   }
 
   public calcularSalarioBruto(horas: number, valor: number): number {
-    console.log("Teste");
     return horas * valor;
   }
  
