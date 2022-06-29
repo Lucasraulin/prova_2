@@ -9,7 +9,7 @@ app.use(express.json());
 app.use(routes);
 
 async function start(){
-    const conn: Connection = await connect("amqp://guest:guest@rabbitmq:5673"); 
+    const conn: Connection = await connect("amqp://guest:guest@localhost:5672"); 
     const channel: Channel = await conn.createChannel();
     const server = RabbitmqServer.getInstance(conn, channel);
     server.createQueue("teste");

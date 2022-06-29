@@ -9,24 +9,20 @@ const folhaRepository = new FolhaRepository();
 export class FolhaPagamentoController {
   cadastrar(request: Request, response: Response) {
     const folha: FolhaPagamento = request.body;
-    const folhas = folhaRepository.cadastrar(folha);
-    return response.status(201).json(folhas);
+    const result = this.calcular(folha);
+    console.log(result);
+    const rabbitmqInstance = RabbitmqServer.getInstance();
+    rabbitmqInstance.send('teste', JSON.stringify(result));
+    return response.status(201).json(result);
   }
 
-  calcular(request: Request, response: Response) {
-    let folhas: FolhaPagamento[] = folhaRepository.listar();
-    //Processar as folhas e enviar para a aplicação B
-    folhas.map((folha) => {
-      folha.bruto = this.calcularSalarioBruto(100,50)
-      folha.irrf = 2;
-      folha.inss = 3;
-      folha.fgts = 4;
-      folha.liquido = 5;
-    });
-
-    const server = RabbitmqServer.getInstance();
-    server.send("teste", JSON.stringify(folhas));
-    return response.status(200).json(folhas);
+  calcular(folha: FolhaPagamento): any {
+    folha.bruto = this.calcularSalarioBruto(100,50)
+    folha.irrf = 2;
+    folha.inss = 3;
+    folha.fgts = 4;
+    folha.liquido = 5;
+    return folha;
   }
 
   public calcularSalarioBruto(horas: number, valor: number): number {
